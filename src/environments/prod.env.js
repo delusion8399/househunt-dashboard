@@ -1,5 +1,5 @@
 module.exports = {
-  HOST: "https://dev.careit.work/api",
+  HOST: "https://househunt.firebase.com",
   CLOUDINARY_URL: "https://api.cloudinary.com/v1_1/samkhan8399/image/upload",
-  SOCKET_URL: "https://dev.careit.work",
+  SOCKET_URL: "https://househunt.firebase.com",
 };
