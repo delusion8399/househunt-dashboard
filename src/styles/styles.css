@@ -1,0 +1,14 @@
+.keep-scrolling {
+  overflow: scroll; /* Add the ability to scroll y axis*/
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.keep-scrolling::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.keep-scrolling {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

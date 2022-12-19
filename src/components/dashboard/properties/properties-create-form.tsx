@@ -74,6 +74,9 @@ export const PropertyCreateForm: FC = (props) => {
       advance: "",
       water: "",
       electricity: "",
+      rate: "",
+      per: "sqft",
+      propertyFor: "",
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Email is required"),
@@ -94,11 +97,14 @@ export const PropertyCreateForm: FC = (props) => {
       lift: Yup.string().required("Required"),
       freeWifi: Yup.string().required("Required"),
       furnishing: Yup.string().required("Required"),
-      rent: Yup.number().required("Required"),
-      advance: Yup.number().required("Required"),
-      rentPeriod: Yup.string().required("Required"),
+      rent: Yup.number(),
+      advance: Yup.number(),
+      rentPeriod: Yup.string(),
       water: Yup.string().required("Required"),
       electricity: Yup.string().required("Required"),
+      rate: Yup.string(),
+      per: Yup.string(),
+      propertyFor: Yup.string().required("Required"),
     }),
     onSubmit: async (values, helpers): Promise<void> => {
       try {
@@ -123,6 +129,9 @@ export const PropertyCreateForm: FC = (props) => {
             bathrooms: values.bathrooms,
           },
           billing: {
+            propertyFor: values.propertyFor,
+            rate: values.rate,
+            per: values.per,
             rent: values.rent,
             rentPeriod: values.rentPeriod,
             advance: values.advance,
@@ -196,7 +205,7 @@ export const PropertyCreateForm: FC = (props) => {
           edit ? await updateEntity(edit, payload) : await create(payload);
         }
 
-        toast.success("Property created!");
+        toast.success(`Property ${edit ? "updated!" : "created!"}`);
         router.push("/dashboard/properties");
       } catch (err) {
         console.error(err);
@@ -248,15 +257,18 @@ export const PropertyCreateForm: FC = (props) => {
         freeWifi?: string;
       } = {};
 
-      for (const item of entity?.data?.placeDescription) {
-        if (item.label === "Furnishing") selectedValues.furnishing = item.value;
-        if (item.label === "Balcony") selectedValues.balcony = item.value;
-        if (item.label === "Front Door Security")
-          selectedValues.frontDoorSecurity = item.value;
-        if (item.label === "Security Cameras")
-          selectedValues.securityCameras = item.value;
-        if (item.label === "Lift") selectedValues.lift = item.value;
-        if (item.label === "Free Wifi") selectedValues.freeWifi = item.value;
+      if (entity?.data?.placeDescription?.length > 0) {
+        for (const item of entity?.data?.placeDescription) {
+          if (item.label === "Furnishing")
+            selectedValues.furnishing = item.value;
+          if (item.label === "Balcony") selectedValues.balcony = item.value;
+          if (item.label === "Front Door Security")
+            selectedValues.frontDoorSecurity = item.value;
+          if (item.label === "Security Cameras")
+            selectedValues.securityCameras = item.value;
+          if (item.label === "Lift") selectedValues.lift = item.value;
+          if (item.label === "Free Wifi") selectedValues.freeWifi = item.value;
+        }
       }
 
       formik.setValues({
@@ -283,6 +295,9 @@ export const PropertyCreateForm: FC = (props) => {
         advance: entity?.data?.billing?.advance,
         water: entity?.data?.billing?.bills?.water,
         electricity: entity?.data?.billing?.bills?.electricity,
+        rate: entity?.data?.billing?.rate,
+        per: entity?.data?.billing?.per,
+        propertyFor: entity?.data?.billing?.propertyFor,
       });
 
       setFiles(entity?.data?.images);
@@ -643,83 +658,196 @@ export const PropertyCreateForm: FC = (props) => {
                   formik.touched.rentPeriod && formik.errors.rentPeriod
                 )}
                 fullWidth
-                label="Rent Period"
-                name="rentPeriod"
+                label="Property For"
+                name="propertyFor"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 select
-                value={formik.values.rentPeriod}
+                sx={{ mb: 2 }}
+                value={formik.values.propertyFor}
               >
                 {[
-                  { label: "day", value: "day" },
-                  { label: "month", value: "month" },
-                  { label: "year", value: "year" },
+                  { label: "Sell", value: "sell" },
+                  { label: "Rent", value: "rent" },
                 ].map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField
-                error={Boolean(formik.touched.rent && formik.errors.rent)}
-                fullWidth
-                label="Rent"
-                name="rent"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                sx={{ mt: 2 }}
-                value={formik.values.rent}
-              />
-              <TextField
-                error={Boolean(formik.touched.advance && formik.errors.advance)}
-                fullWidth
-                label="Advance"
-                name="advance"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                sx={{ mt: 2 }}
-                value={formik.values.advance}
-              />
-              <TextField
-                error={Boolean(formik.touched.water && formik.errors.water)}
-                fullWidth
-                label="Water Bill"
-                name="water"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                select
-                sx={{ mt: 3 }}
-                value={formik.values.water}
-              >
-                {[
-                  { label: "included", value: "included" },
-                  { label: "separate", value: "separate" },
-                ].map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                error={Boolean(formik.touched.water && formik.errors.water)}
-                fullWidth
-                label="Electricity Bill"
-                name="electricity"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                select
-                sx={{ mt: 3 }}
-                value={formik.values.electricity}
-              >
-                {[
-                  { label: "included", value: "included" },
-                  { label: "separate", value: "separate" },
-                ].map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              {formik.values.propertyFor === "rent" ? (
+                <>
+                  <TextField
+                    error={Boolean(
+                      formik.touched.rentPeriod && formik.errors.rentPeriod
+                    )}
+                    fullWidth
+                    label="Rent Period"
+                    name="rentPeriod"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    value={formik.values.rentPeriod}
+                  >
+                    {[
+                      { label: "day", value: "day" },
+                      { label: "month", value: "month" },
+                      { label: "year", value: "year" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    error={Boolean(formik.touched.rent && formik.errors.rent)}
+                    fullWidth
+                    label="Rent"
+                    name="rent"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    sx={{ mt: 2 }}
+                    value={formik.values.rent}
+                  />
+                  <TextField
+                    error={Boolean(
+                      formik.touched.advance && formik.errors.advance
+                    )}
+                    fullWidth
+                    label="Advance"
+                    name="advance"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    sx={{ mt: 2 }}
+                    value={formik.values.advance}
+                  />
+                  <TextField
+                    error={Boolean(formik.touched.water && formik.errors.water)}
+                    fullWidth
+                    label="Water Bill"
+                    name="water"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    sx={{ mt: 3 }}
+                    value={formik.values.water}
+                  >
+                    {[
+                      { label: "included", value: "included" },
+                      { label: "separate", value: "separate" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    error={Boolean(formik.touched.water && formik.errors.water)}
+                    fullWidth
+                    label="Electricity Bill"
+                    name="electricity"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    sx={{ mt: 3 }}
+                    value={formik.values.electricity}
+                  >
+                    {[
+                      { label: "included", value: "included" },
+                      { label: "separate", value: "separate" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    error={Boolean(formik.touched.rate && formik.errors.rate)}
+                    fullWidth
+                    label="Rate"
+                    name="rate"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.rate}
+                  />
+                  <TextField
+                    error={Boolean(formik.touched.per && formik.errors.per)}
+                    fullWidth
+                    label="Per"
+                    name="per"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    sx={{ mt: 2 }}
+                    value={formik.values.per}
+                  >
+                    {[
+                      { label: "Sq ft.", value: "sqft" },
+                      { label: "Sq.Yds", value: "sqyd" },
+                      { label: "Sq. Mtr", value: "sqmtr" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    error={Boolean(
+                      formik.touched.advance && formik.errors.advance
+                    )}
+                    fullWidth
+                    label="Booking Amount"
+                    name="advance"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    sx={{ mt: 2 }}
+                    value={formik.values.advance}
+                  />
+                  <TextField
+                    error={Boolean(formik.touched.water && formik.errors.water)}
+                    fullWidth
+                    label="Water Bill"
+                    name="water"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    sx={{ mt: 3 }}
+                    value={formik.values.water}
+                  >
+                    {[
+                      { label: "included", value: "included" },
+                      { label: "separate", value: "separate" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    error={Boolean(formik.touched.water && formik.errors.water)}
+                    fullWidth
+                    label="Electricity Bill"
+                    name="electricity"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    select
+                    sx={{ mt: 3 }}
+                    value={formik.values.electricity}
+                  >
+                    {[
+                      { label: "included", value: "included" },
+                      { label: "separate", value: "separate" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </>
+              )}
             </Grid>
           </Grid>
         </CardContent>

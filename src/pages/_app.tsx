@@ -28,6 +28,7 @@ import { createTheme } from "../theme";
 import { createEmotionCache } from "../utils/create-emotion-cache";
 import "../i18n";
 import { QueryClient, QueryClientProvider } from "react-query";
+import "../styles/styles.css";
 
 type EnhancedAppProps = AppProps & {
   Component: NextPage;

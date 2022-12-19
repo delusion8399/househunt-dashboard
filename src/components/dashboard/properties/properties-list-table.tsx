@@ -41,6 +41,8 @@ import { Scrollbar } from "../../scrollbar";
 import { listingType } from "./properties-create-form";
 import environments from "src/environments";
 import { useRouter } from "next/router";
+import Chip from "@mui/material/Chip";
+import { SeverityPill } from "src/components/severity-pill";
 
 interface PropertiesListTableProps {
   onPageChange?: (
@@ -179,8 +181,9 @@ export const PropertiesListTable: FC<PropertiesListTableProps> = (props) => {
             <TableRow>
               <TableCell />
               <TableCell width="25%">Title</TableCell>
-              <TableCell width="25%">Type</TableCell>
-              <TableCell>Rent</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Property For</TableCell>
+              <TableCell>Rent/Price</TableCell>
               <TableCell>Bed/Bath</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -278,13 +281,31 @@ export const PropertiesListTable: FC<PropertiesListTableProps> = (props) => {
                         </Box>
                       </Box>
                     </TableCell>
-                    <TableCell width="25%">
+
+                    <TableCell>
                       <Typography color="textSecondary" variant="body2">
                         {property.listingType}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      ₹{numeral(property.billing.rent).format(`0,0.00`)}
+                      <SeverityPill
+                        color={
+                          property.billing.propertyFor === "rent"
+                            ? "success"
+                            : "info"
+                        }
+                      >
+                        {property.billing.propertyFor}
+                      </SeverityPill>
+                    </TableCell>
+                    <TableCell>
+                      {property.billing.propertyFor === "rent"
+                        ? `₹${numeral(property.billing.rent).format(
+                            `0,0.00`
+                          )}/${property.billing.rentPeriod}`
+                        : `₹${numeral(property.billing.rate).format(
+                            `0,0.00`
+                          )}/${property.billing.per}`}
                     </TableCell>
                     <TableCell>
                       {property.placeInfo.bedrooms}/

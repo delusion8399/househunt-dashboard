@@ -27,6 +27,9 @@ export type ListingBilling = {
   advance?: number;
   otherCharges?: ListingBillingOtherCharge[];
   bills?: ListingBillingBill;
+  propertyFor?: "sell" | "rent";
+  rate?: number;
+  per?: "sqft" | "sqyd" | "sqmtr";
 };
 
 export type ListingPlaceDescription = {
