@@ -235,7 +235,7 @@ export const PropertiesListTable: FC<PropertiesListTableProps> = (props) => {
                           display: "flex",
                         }}
                       >
-                        {property.images[0] ? (
+                        {property?.images?.length > 0 ? (
                           <Box
                             sx={{
                               alignItems: "center",

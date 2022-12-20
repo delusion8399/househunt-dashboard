@@ -97,7 +97,7 @@ export const PropertyCreateForm: FC = (props) => {
       lift: Yup.string().required("Required"),
       freeWifi: Yup.string().required("Required"),
       furnishing: Yup.string().required("Required"),
-      rent: Yup.number(),
+      rent: Yup.number().optional().nullable(),
       advance: Yup.number(),
       rentPeriod: Yup.string(),
       water: Yup.string().required("Required"),
@@ -187,17 +187,7 @@ export const PropertyCreateForm: FC = (props) => {
               value: values.furnishing,
             },
           ],
-          images:
-            response?.data?.length > 0
-              ? [...response.data, ...files].map((img) => ({
-                  url: img.url,
-                  name: img.name,
-                  path: img.path,
-                  size: img.size,
-                }))
-              : edit
-              ? files
-              : [], // pending
+          images: files, // pending
           user: user._id,
         };
 
@@ -217,6 +207,8 @@ export const PropertyCreateForm: FC = (props) => {
     },
   });
 
+  console.log(formik.errors);
+
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
@@ -233,12 +225,15 @@ export const PropertyCreateForm: FC = (props) => {
 
   const handleUpload = async (): Promise<void> => {
     try {
-      await uploadImages(files);
+      const res = await uploadImages(files);
+      setFiles(res.data);
       toast.success("Images uploaded");
     } catch (error) {
       toast.error(error.message);
     }
   };
+
+  console.log(formik.error);
 
   useEffect(() => {
     if (router.query.id) {

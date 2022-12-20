@@ -20,7 +20,7 @@ export const RentCard = ({ listing }) => {
         component="img"
         height="140"
         image={`${
-          listing?.images[0]
+          listing?.images?.length > 0
             ? `http://${listing?.images[0]?.url}`
             : "https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
         }`}
