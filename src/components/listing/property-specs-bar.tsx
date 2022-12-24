@@ -25,10 +25,14 @@ const PropertySpecsBar = ({ listing }) => {
           textAlign: "center",
         }}
       >
-        <Typography>Average Price</Typography>
+        <Typography>
+          Average {listing?.billing?.propertyFor === "rent" ? "Rent" : "Price"}
+        </Typography>
 
         <Typography>
-          ₹{listing?.billing?.rate}/{listing?.billing?.per}
+          {listing?.billing?.propertyFor === "rent"
+            ? `₹${listing?.billing?.rent}/${listing?.billing?.rentPeriod}`
+            : `₹${listing?.billing?.rate}/${listing?.billing?.per}`}
         </Typography>
       </Box>
       <Divider orientation="vertical" flexItem />

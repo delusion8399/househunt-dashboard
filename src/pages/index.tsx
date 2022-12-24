@@ -9,6 +9,7 @@ import {
 import { Box } from "@mui/system";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { RentCard } from "src/components/index/rent-card";
 import RentProperties from "src/components/index/rent-properties";
@@ -20,7 +21,10 @@ import { MainLayout } from "../components/main-layout";
 import { gtm } from "../lib/gtm";
 
 const Home: NextPage = () => {
-  const [activeTab, setActiveTab] = useState("Buy");
+  const [activeTab, setActiveTab] = useState<string>("Buy");
+  const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
@@ -74,15 +78,22 @@ const Home: NextPage = () => {
                   placeholder="Search"
                   autoFocus
                   sx={{ width: "100%", borderColor: "#fff" }}
+                  onChange={(e) => setSearch(e.target.value)}
+                  value={search}
                 ></TextField>
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
                     component="a"
-                    href="https://material-ui.com/store/items/devias-kit-pro"
                     size="large"
                     sx={{ mt: 2 }}
                     target="_blank"
                     variant="contained"
+                    onClick={() =>
+                      router.push({
+                        pathname: "/listing/search",
+                        query: { search },
+                      })
+                    }
                   >
                     Search
                   </Button>

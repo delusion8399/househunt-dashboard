@@ -4,16 +4,9 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Box } from "@mui/system";
+import { formatter } from "src/utils/currency-formatter";
 
 const PropertyHeader = ({ listing }) => {
-  const formatter = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-    notation: "compact",
-    compactDisplay: "long",
-  });
   return (
     <Box sx={{ mt: 5 }}>
       <Stack direction="row" justifyContent="space-between">
@@ -24,7 +17,7 @@ const PropertyHeader = ({ listing }) => {
             <FavoriteBorderIcon />
           </Stack>
           <Typography variant="body2" sx={{ my: 1 }}>
-            By Family Property
+            By {listing?.builder}
           </Typography>
           <Typography variant="body2" sx={{ color: "#ededed" }}>
             {listing?.address?.building}
@@ -32,19 +25,39 @@ const PropertyHeader = ({ listing }) => {
         </Box>
         <Stack direction="column" alignItems="flex-end">
           <Stack direction="row" alignItems="center">
-            <Typography variant="h5">
-              {formatter.format(
-                listing?.billing?.rate * listing?.placeInfo?.area
-              )}
-              |
-            </Typography>
-            <Typography variant="body2">
-              ₹{listing?.billing?.rate}/{listing?.billing?.per}
-            </Typography>
+            {listing?.billing?.propertyFor === "rent" ? (
+              <>
+                <Typography variant="h5">
+                  {formatter.format(listing?.billing?.rent)}/
+                </Typography>
+                <Typography variant="body2">
+                  {listing?.billing?.rentPeriod}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="h5">
+                  {formatter.format(
+                    listing?.billing?.rate * listing?.placeInfo?.area
+                  )}
+                  |
+                </Typography>
+                <Typography variant="body2">
+                  ₹{listing?.billing?.rate}/{listing?.billing?.per}
+                </Typography>
+              </>
+            )}
           </Stack>
-          <Typography>EMI facility available</Typography>
+          <Typography>
+            {listing?.billing?.propertyFor === "rent" ? (
+              <></>
+            ) : (
+              <>EMI facility available</>
+            )}
+          </Typography>
           <Typography variant="body2">
-            Price excludes maintainace, floor rise cost etc.
+            {listing?.billing?.propertyFor === "rent" ? "Rent" : "Price"}
+            excludes maintainace, floor rise cost etc.
           </Typography>
         </Stack>
       </Stack>
@@ -54,7 +67,8 @@ const PropertyHeader = ({ listing }) => {
           startIcon={<LocalPhoneOutlinedIcon />}
           onClick={() => window.open(`tel:${listing?.contact}`)}
         >
-          Call Developer
+          Call{" "}
+          {listing?.billing?.propertyFor === "rent" ? "Owner" : "Developer"}
         </Button>
       </Stack>
     </Box>

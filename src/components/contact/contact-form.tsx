@@ -1,4 +1,5 @@
 import type { FC, FormEvent } from "react";
+import React, { useRef } from "react";
 import {
   Box,
   Button,
@@ -9,14 +10,33 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import emailjs from "@emailjs/browser";
 
 export const ContactForm: FC = () => {
+  const form = useRef();
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+
+    console.log(process.env.EMAILJS_PUBLIC_KEY, process.env.EMAILJS_SERVICE_ID);
+    emailjs
+      .sendForm(
+        process.env.EMAILJS_SERVICE_ID,
+        "template_19lghz6",
+        form.current,
+        process.env.EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} ref={form}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <Typography sx={{ mb: 1 }} variant="subtitle2">
@@ -47,7 +67,7 @@ export const ContactForm: FC = () => {
           <Typography sx={{ mb: 1 }} variant="subtitle2">
             Address*
           </Typography>
-          <TextField fullWidth name="company" required />
+          <TextField fullWidth name="address" required />
         </Grid>
         <Grid item xs={12}>
           <Typography sx={{ mb: 1 }} variant="subtitle2">
@@ -63,31 +83,10 @@ export const ContactForm: FC = () => {
           mt: 3,
         }}
       >
-        <Button fullWidth size="large" variant="contained">
-          Let&apos;s Talk
+        <Button type="submit" fullWidth size="large" variant="contained">
+          Send
         </Button>
       </Box>
-      <Typography color="textSecondary" sx={{ mt: 3 }} variant="body2">
-        By submitting this, you agree to the{" "}
-        <Link
-          color="textPrimary"
-          href="#"
-          underline="always"
-          variant="subtitle2"
-        >
-          Privacy Policy
-        </Link>{" "}
-        and{" "}
-        <Link
-          color="textPrimary"
-          href="#"
-          underline="always"
-          variant="subtitle2"
-        >
-          Cookie Policy
-        </Link>
-        .
-      </Typography>
     </form>
   );
 };

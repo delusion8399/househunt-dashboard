@@ -11,8 +11,10 @@ import {
 import BedIcon from "@mui/icons-material/Bed";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import BathtubIcon from "@mui/icons-material/Bathtub";
+import { useRouter } from "next/router";
 
 export const RentCard = ({ listing }) => {
+  const router = useRouter();
   console.log(listing);
   return (
     <Card sx={{ maxWidth: "100%", minWidth: 345, height: 400 }}>
@@ -26,7 +28,13 @@ export const RentCard = ({ listing }) => {
         }`}
       />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          style={{ cursor: "pointer" }}
+          onClick={() => router.push(`/listing/${listing?.slug}`)}
+        >
           {listing?.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">

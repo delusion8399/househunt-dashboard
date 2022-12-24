@@ -56,6 +56,7 @@ export const PropertyCreateForm: FC = (props) => {
       listingType: "apartment",
       address: "",
       phone: "",
+      builder: "",
       street: "",
       district: "",
       floor: "",
@@ -82,6 +83,7 @@ export const PropertyCreateForm: FC = (props) => {
       title: Yup.string().required("Email is required"),
       description: Yup.string().required("Description is required"),
       listingType: Yup.string().required("Listing Type is required"),
+      builder: Yup.string(),
       phone: Yup.number().required("Number is required"),
       address: Yup.string().required("Required"),
       street: Yup.string().required("Required"),
@@ -115,6 +117,7 @@ export const PropertyCreateForm: FC = (props) => {
           description: values.description,
           listingType: values.listingType,
           contact: values.phone,
+          builder: values.builder,
           contacts: [values.phone],
           address: {
             city: values.city,
@@ -293,6 +296,7 @@ export const PropertyCreateForm: FC = (props) => {
         rate: entity?.data?.billing?.rate,
         per: entity?.data?.billing?.per,
         propertyFor: entity?.data?.billing?.propertyFor,
+        builder: entity?.data?.builder,
       });
 
       setFiles(entity?.data?.images);
@@ -343,6 +347,17 @@ export const PropertyCreateForm: FC = (props) => {
                   </FormHelperText>
                 </Box>
               )}
+              <TextField
+                error={Boolean(formik.touched.phone && formik.errors.phone)}
+                fullWidth
+                label="Builder/Owner"
+                name="builder"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                sx={{ mt: 2 }}
+                type="text"
+                value={formik.values.builder}
+              />
               <TextField
                 error={Boolean(formik.touched.phone && formik.errors.phone)}
                 fullWidth

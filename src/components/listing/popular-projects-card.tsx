@@ -4,21 +4,31 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import { useRouter } from "next/router";
+import { formatter } from "src/utils/currency-formatter";
 import { SeverityPill } from "../severity-pill";
 
-const PopularProjectsCard = () => {
+const PopularProjectsCard = ({ listing }) => {
+  const router = useRouter();
   return (
-    <Card sx={{ display: "flex", maxWidth: 450 }}>
+    <Card sx={{ display: "flex", maxWidth: 400 }}>
       <CardMedia
         component="img"
-        sx={{ width: 151 }}
-        image="https://mui.com/static/images/cards/live-from-space.jpg"
-        alt="Live from space album cover"
+        sx={{ width: 151, height: 150 }}
+        image={
+          listing?.images?.length > 0 ? `http://${listing?.images[0]?.url}` : ""
+        }
+        alt="Property Pic"
       />
       <Box sx={{ p: 1 }}>
-        <Typography sx={{ mb: 1, fontWeight: 600 }}>$22.96 - 45 L</Typography>
-        <Typography>Rudra Enclave</Typography>
-        <Typography variant="body2">Naini, Allahabad</Typography>
+        <Typography>{listing?.title}</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          {formatter.format(listing?.billing?.rate * listing?.placeInfo?.area)}
+        </Typography>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          {listing?.address?.building}
+        </Typography>
       </Box>
       <Stack
         direction="column"
@@ -26,7 +36,11 @@ const PopularProjectsCard = () => {
         sx={{ mx: 1, my: 1 }}
       >
         <SeverityPill color="error">Popular</SeverityPill>
-        <Button variant="contained" sx={{ px: 0.5, py: 0.5 }}>
+        <Button
+          variant="contained"
+          sx={{ px: 0.5, py: 0.5 }}
+          onClick={() => router.push(`/listing/${listing?.slug}`)}
+        >
           Intrested
         </Button>
       </Stack>
