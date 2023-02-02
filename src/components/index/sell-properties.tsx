@@ -8,7 +8,7 @@ const SellProperties = ({ listings }) => {
       <Grid container spacing={6}>
         {listings?.map((op) => {
           return (
-            <Grid item md={4} xs={8} key={op}>
+            <Grid item md={4} xs={8} key={op._id}>
               <SellCard listing={op} />
             </Grid>
           );

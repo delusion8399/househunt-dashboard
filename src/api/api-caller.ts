@@ -24,7 +24,7 @@ export default async function apiCaller(
     body: undefined,
   }
 ) {
-  let token = "";
+  let token = localStorage.getItem("accessToken");
 
   const opt = {
     method: options.method,

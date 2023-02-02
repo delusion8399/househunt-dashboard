@@ -1,11 +1,10 @@
-import { useEffect } from "react";
+import { Box, Card, Container, Divider, Link, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Card, Container, Divider, Link, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { GuestGuard } from "../../components/authentication/guest-guard";
-import { AuthBanner } from "../../components/authentication/auth-banner";
 
 import { JWTLogin } from "../../components/authentication/jwt-login";
 import { Logo } from "../../components/logo";
@@ -24,7 +23,7 @@ const Login: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit Pro</title>
+        <title>Login- HouseHunt</title>
       </Head>
       <Box
         component="main"

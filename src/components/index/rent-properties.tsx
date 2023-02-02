@@ -19,7 +19,7 @@ const RentProperties = ({ listings }) => {
       >
         {listings?.map((op) => {
           return (
-            <Box sx={{ mr: 3 }} key={op}>
+            <Box sx={{ mr: 3 }} key={op._id}>
               <RentCard listing={op} />
             </Box>
           );

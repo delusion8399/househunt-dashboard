@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 
 export const RentCard = ({ listing }) => {
   const router = useRouter();
-  console.log(listing);
   return (
     <Card sx={{ maxWidth: "100%", minWidth: 345, height: 400 }}>
       <CardMedia

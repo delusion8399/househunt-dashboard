@@ -89,7 +89,7 @@ export const JWTLogin: FC = (props) => {
       <Box sx={{ mt: 2 }}>
         <Alert severity="info">
           <div>
-            Use <b>demo@devias.io</b> and password <b>Password123!</b>
+            Use <b>demo@example.com</b> and password <b>Password123</b>
           </div>
         </Alert>
       </Box>

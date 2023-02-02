@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "../icons/menu";
 import { Logo } from "./logo";
+import { useAuth } from "src/hooks/use-auth";
 
 interface MainNavbarProps {
   onOpenSidebar?: () => void;
@@ -19,6 +20,7 @@ interface MainNavbarProps {
 
 export const MainNavbar: FC<MainNavbarProps> = (props) => {
   const { onOpenSidebar } = props;
+  const { user } = useAuth();
 
   return (
     <AppBar
@@ -68,20 +70,45 @@ export const MainNavbar: FC<MainNavbarProps> = (props) => {
               },
             }}
           >
-            <NextLink href="/dashboard" passHref>
-              <Link color="textSecondary" underline="none" variant="subtitle2">
-                Dashboard
-              </Link>
-            </NextLink>
-            <Button
-              component="a"
-              size="medium"
-              sx={{ ml: 2 }}
-              target="_blank"
-              variant="contained"
-            >
-              Add New Property
-            </Button>
+            {user?._id && (
+              <>
+                <Button
+                  component="a"
+                  size="medium"
+                  sx={{ ml: 2 }}
+                  target="_blank"
+                  variant="contained"
+                >
+                  <NextLink href="/dashboard/properties/new" passHref>
+                    <Link color="white" underline="none" variant="subtitle2">
+                      Add new property
+                    </Link>
+                  </NextLink>
+                </Button>
+                <NextLink href="/dashboard" passHref>
+                  <Link
+                    color="textSecondary"
+                    underline="none"
+                    variant="subtitle2"
+                    style={{ marginRight: 10, marginLeft: 10 }}
+                  >
+                    Dashboard
+                  </Link>
+                </NextLink>
+              </>
+            )}
+            {!user?._id && (
+              <NextLink href="/dashboard" passHref>
+                <Link
+                  color="textSecondary"
+                  underline="none"
+                  variant="subtitle2"
+                  style={{ marginRight: 10, marginLeft: 10 }}
+                >
+                  Login
+                </Link>
+              </NextLink>
+            )}
           </Box>
         </Toolbar>
       </Container>

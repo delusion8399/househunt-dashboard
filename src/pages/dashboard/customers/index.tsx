@@ -227,7 +227,7 @@ const CustomerList: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Dashboard: Customer List | Material Kit Pro</title>
+        <title>Dashboard: Customer List | Househunt</title>
       </Head>
       <Box
         component="main"

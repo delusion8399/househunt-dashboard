@@ -39,7 +39,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Househunt</title>
+        <title>Househunt- Property Marketplace</title>
       </Head>
       <main>
         <Container maxWidth="lg">

@@ -1,11 +1,7 @@
-import { useRef, useState, useEffect } from "react";
-import type { FC } from "react";
-import PropTypes from "prop-types";
-import { useTranslation } from "react-i18next";
+import type { AppBarProps } from "@mui/material";
 import {
   AppBar,
   Avatar,
-  Badge,
   Box,
   ButtonBase,
   IconButton,
@@ -13,19 +9,17 @@ import {
   Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import type { AppBarProps } from "@mui/material";
-import { Menu as MenuIcon } from "../../icons/menu";
-import { AccountPopover } from "./account-popover";
-import { ContentSearchDialog } from "./content-search-dialog";
-import { NotificationsPopover } from "./notifications-popover";
-import { LanguagePopover } from "./language-popover";
-import { Bell as BellIcon } from "../../icons/bell";
-import { UserCircle as UserCircleIcon } from "../../icons/user-circle";
-import { Search as SearchIcon } from "../../icons/search";
-import { Users as UsersIcon } from "../../icons/users";
+import PropTypes from "prop-types";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import environments from "src/environments";
 import { useAuth } from "src/hooks/use-auth";
 import { useEntity } from "src/hooks/use-entity";
-import environments from "src/environments";
+import { Menu as MenuIcon } from "../../icons/menu";
+import { Search as SearchIcon } from "../../icons/search";
+import { UserCircle as UserCircleIcon } from "../../icons/user-circle";
+import { AccountPopover } from "./account-popover";
+import { ContentSearchDialog } from "./content-search-dialog";
 
 interface DashboardNavbarProps extends AppBarProps {
   onOpenSidebar?: () => void;
