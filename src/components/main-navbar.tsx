@@ -70,39 +70,17 @@ export const MainNavbar: FC<MainNavbarProps> = (props) => {
           >
             <NextLink href="/dashboard" passHref>
               <Link color="textSecondary" underline="none" variant="subtitle2">
-                Live Demo
-              </Link>
-            </NextLink>
-            <NextLink href="/browse" passHref>
-              <Link
-                color="textSecondary"
-                sx={{ ml: 2 }}
-                underline="none"
-                variant="subtitle2"
-              >
-                Components
-              </Link>
-            </NextLink>
-            <NextLink href="/docs/welcome" passHref>
-              <Link
-                color="textSecondary"
-                component="a"
-                sx={{ ml: 2 }}
-                underline="none"
-                variant="subtitle2"
-              >
-                Documentation
+                Dashboard
               </Link>
             </NextLink>
             <Button
               component="a"
-              href="https://material-ui.com/store/items/devias-kit-pro"
               size="medium"
               sx={{ ml: 2 }}
               target="_blank"
               variant="contained"
             >
-              Buy Now
+              Add New Property
             </Button>
           </Box>
         </Toolbar>

@@ -48,7 +48,7 @@ const ListingSlug = () => {
           <CardHeader title="Contact Developer" />
           <Divider />
           <CardContent>
-            <ContactForm />
+            <ContactForm listing={entity?.data} />
           </CardContent>
         </Card>
       </Container>

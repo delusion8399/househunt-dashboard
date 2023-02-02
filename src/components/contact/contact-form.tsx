@@ -11,19 +11,19 @@ import {
   Typography,
 } from "@mui/material";
 import emailjs from "@emailjs/browser";
+import environments from "src/environments";
 
-export const ContactForm: FC = () => {
+export const ContactForm: FC = ({ listing }) => {
   const form = useRef();
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    console.log(process.env.EMAILJS_PUBLIC_KEY, process.env.EMAILJS_SERVICE_ID);
     emailjs
       .sendForm(
-        process.env.EMAILJS_SERVICE_ID,
+        environments.services.emailJS.serviceId,
         "template_19lghz6",
         form.current,
-        process.env.EMAILJS_PUBLIC_KEY
+        environments.services.emailJS.publicKey
       )
       .then(
         (result) => {
@@ -33,6 +33,8 @@ export const ContactForm: FC = () => {
           console.log(error.text);
         }
       );
+
+    // form.current.reset();
   };
 
   return (
