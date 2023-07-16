@@ -1,9 +1,9 @@
-import type { FC } from 'react';
-import NextLink from 'next/link';
-import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+import type { FC } from "react";
+import NextLink from "next/link";
+import PropTypes from "prop-types";
+import toast from "react-hot-toast";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 import {
   Box,
   Button,
@@ -15,83 +15,75 @@ import {
   Grid,
   Switch,
   TextField,
-  Typography
-} from '@mui/material';
-import type { Customer } from '../../../types/customer';
-import { wait } from '../../../utils/wait';
+  Typography,
+} from "@mui/material";
+import type { Customer } from "../../../types/customer";
+import { wait } from "../../../utils/wait";
+import { useEntity } from "src/hooks/use-entity";
 
 interface CustomerEditFormProps {
   customer: Customer;
 }
 
 export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
+  const { updateEntity, deleteEntity } = useEntity("user");
+
   const { customer, ...other } = props;
   const formik = useFormik({
     initialValues: {
-      address1: customer.address1 || '',
-      address2: customer.address2 || '',
-      country: customer.country || '',
-      email: customer.email || '',
-      hasDiscount: customer.hasDiscount || false,
-      isVerified: customer.isVerified || false,
-      name: customer.name || '',
-      phone: customer.phone || '',
-      state: customer.state || '',
-      submit: null
+      address1: customer.address1 || customer?.address?.split(",")[0] || "",
+      address2: customer.address2 || customer?.address?.split(",")[1] || "",
+      country: customer.country || "",
+      email: customer.email || "",
+      name: customer.name || "",
+      mobile: customer.mobile || "",
+      state: customer.state || "",
     },
     validationSchema: Yup.object({
       address1: Yup.string().max(255),
       address2: Yup.string().max(255),
       country: Yup.string().max(255),
-      email: Yup
-        .string()
-        .email('Must be a valid email')
+      email: Yup.string()
+        .email("Must be a valid email")
         .max(255)
-        .required('Email is required'),
-      hasDiscount: Yup.bool(),
-      isVerified: Yup.bool(),
-      name: Yup
-        .string()
-        .max(255)
-        .required('Name is required'),
-      phone: Yup.string().max(15),
-      state: Yup.string().max(255)
+        .required("Email is required"),
+
+      name: Yup.string().max(255).required("Name is required"),
+      mobile: Yup.string().max(15),
+      state: Yup.string().max(255),
     }),
     onSubmit: async (values, helpers): Promise<void> => {
       try {
-        // NOTE: Make API request
-        await wait(500);
+        await updateEntity(customer._id, {
+          ...values,
+          address: `${values.address1}, ${values.address2}`,
+        });
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);
-        toast.success('Customer updated!');
+        toast.success("User updated!");
       } catch (err) {
         console.error(err);
-        toast.error('Something went wrong!');
+        toast.error("Something went wrong!");
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
-    }
+    },
   });
 
+  const handleDelete = async () => {
+    await deleteEntity(customer._id);
+    toast.success("User deleted!");
+  };
+
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      {...other}
-    >
+    <form onSubmit={formik.handleSubmit} {...other}>
       <Card>
         <CardHeader title="Edit customer" />
         <Divider />
         <CardContent>
-          <Grid
-            container
-            spacing={3}
-          >
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.name && formik.errors.name)}
                 fullWidth
@@ -104,11 +96,7 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.name}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.email && formik.errors.email)}
                 fullWidth
@@ -121,11 +109,7 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.email}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.country && formik.errors.country)}
                 fullWidth
@@ -137,11 +121,7 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.country}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.state && formik.errors.state)}
                 fullWidth
@@ -153,13 +133,11 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.state}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.address1 && formik.errors.address1)}
+                error={Boolean(
+                  formik.touched.address1 && formik.errors.address1
+                )}
                 fullWidth
                 helperText={formik.touched.address1 && formik.errors.address1}
                 label="Address 1"
@@ -169,13 +147,11 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.address1}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.address2 && formik.errors.address2)}
+                error={Boolean(
+                  formik.touched.address2 && formik.errors.address2
+                )}
                 fullWidth
                 helperText={formik.touched.address2 && formik.errors.address2}
                 label="Address 2"
@@ -185,94 +161,24 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
                 value={formik.values.address2}
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.phone && formik.errors.phone)}
+                error={Boolean(formik.touched.mobile && formik.errors.mobile)}
                 fullWidth
-                helperText={formik.touched.phone && formik.errors.phone}
-                label="Phone number"
-                name="phone"
+                helperText={formik.touched.mobile && formik.errors.mobile}
+                label="Mobile number"
+                name="mobile"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.phone}
+                value={formik.values.mobile}
               />
             </Grid>
           </Grid>
-          <Box
-            sx={{
-              alignItems: 'center',
-              display: 'flex',
-              justifyContent: 'space-between',
-              mt: 3
-            }}
-          >
-            <div>
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-              >
-                Make Contact Info Public
-              </Typography>
-              <Typography
-                color="textSecondary"
-                variant="body2"
-                sx={{ mt: 1 }}
-              >
-                Means that anyone viewing your profile will be able to see your contacts
-                details
-              </Typography>
-            </div>
-            <Switch
-              checked={formik.values.isVerified}
-              color="primary"
-              edge="start"
-              name="isVerified"
-              onChange={formik.handleChange}
-              value={formik.values.isVerified}
-            />
-          </Box>
-          <Divider sx={{ my: 3 }} />
-          <Box
-            sx={{
-              alignItems: 'center',
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}
-          >
-            <div>
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-              >
-                Available to hire
-              </Typography>
-              <Typography
-                color="textSecondary"
-                variant="body2"
-                sx={{ mt: 1 }}
-              >
-                Toggling this will let your teammates know that you are available for
-                acquiring new projects
-              </Typography>
-            </div>
-            <Switch
-              checked={formik.values.hasDiscount}
-              color="primary"
-              edge="start"
-              name="hasDiscount"
-              onChange={formik.handleChange}
-              value={formik.values.hasDiscount}
-            />
-          </Box>
         </CardContent>
         <CardActions
           sx={{
-            flexWrap: 'wrap',
-            m: -1
+            flexWrap: "wrap",
+            m: -1,
           }}
         >
           <Button
@@ -283,16 +189,13 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
           >
             Update
           </Button>
-          <NextLink
-            href="/dashboard/customers/1"
-            passHref
-          >
+          <NextLink href="/dashboard/customers/1" passHref>
             <Button
               component="a"
               disabled={formik.isSubmitting}
               sx={{
                 m: 1,
-                mr: 'auto'
+                mr: "auto",
               }}
               variant="outlined"
             >
@@ -302,6 +205,7 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
           <Button
             color="error"
             disabled={formik.isSubmitting}
+            onClick={handleDelete}
           >
             Delete user
           </Button>
@@ -313,5 +217,5 @@ export const CustomerEditForm: FC<CustomerEditFormProps> = (props) => {
 
 CustomerEditForm.propTypes = {
   // @ts-ignore
-  customer: PropTypes.object.isRequired
+  customer: PropTypes.object.isRequired,
 };

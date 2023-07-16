@@ -35,24 +35,17 @@ const ProductList: NextPage = () => {
     gtm.push({ event: "page_view" });
   }, []);
 
-  const getProperties = async () => {
-    try {
-      const data: any = await find(
-        { user: user._id, page, limit: rowsPerPage, searchQuery: value },
-        {}
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(
-    () => {
-      getProperties();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [page, rowsPerPage, value]
-  );
+  useEffect(() => {
+    find(
+      {
+        ...(user.type === "user" ? { user: user._id } : {}),
+        page,
+        limit: rowsPerPage,
+        searchQuery: value,
+      },
+      {}
+    );
+  }, [page, rowsPerPage, value]);
 
   const handlePageChange = (
     event: MouseEvent<HTMLButtonElement> | null,

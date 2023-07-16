@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { FC } from 'react';
-import { format } from 'date-fns';
+import { useState, useEffect, useCallback } from "react";
+import type { FC } from "react";
+import { format } from "date-fns";
 import {
   Card,
   CardHeader,
@@ -9,14 +9,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableRow
-} from '@mui/material';
-import { customerApi } from '../../../__fake-api__/customer-api';
-import { useMounted } from '../../../hooks/use-mounted';
-import type { CustomerLog } from '../../../types/customer';
-import { MoreMenu } from '../../more-menu';
-import { Scrollbar } from '../../scrollbar';
-import { SeverityPill } from '../../severity-pill';
+  TableRow,
+} from "@mui/material";
+import { useMounted } from "../../../hooks/use-mounted";
+import type { CustomerLog } from "../../../types/customer";
+import { MoreMenu } from "../../more-menu";
+import { Scrollbar } from "../../scrollbar";
+import { SeverityPill } from "../../severity-pill";
 
 export const CustomerLogs: FC = (props) => {
   const isMounted = useMounted();
@@ -40,10 +39,7 @@ export const CustomerLogs: FC = (props) => {
 
   return (
     <Card {...props}>
-      <CardHeader
-        action={<MoreMenu />}
-        title="Recent Logs"
-      />
+      <CardHeader action={<MoreMenu />} title="Recent Logs" />
       <Divider />
       <Scrollbar>
         <Table sx={{ minWidth: 700 }}>
@@ -51,35 +47,26 @@ export const CustomerLogs: FC = (props) => {
             {logs.map((log) => (
               <TableRow key={log.id}>
                 <TableCell width="100">
-                  <Typography
-                    color="textSecondary"
-                    variant="caption"
-                  >
+                  <Typography color="textSecondary" variant="caption">
                     {log.method}
                   </Typography>
                 </TableCell>
                 <TableCell width="64">
                   <SeverityPill
                     color={
-                      (log.status >= 200 && log.status < 300)
-                        ? 'success'
-                        : 'error'
+                      log.status >= 200 && log.status < 300
+                        ? "success"
+                        : "error"
                     }
                   >
                     {log.status}
                   </SeverityPill>
                 </TableCell>
+                <TableCell>{log.route}</TableCell>
+                <TableCell>{log.description}</TableCell>
+                <TableCell>{log.ip}</TableCell>
                 <TableCell>
-                  {log.route}
-                </TableCell>
-                <TableCell>
-                  {log.description}
-                </TableCell>
-                <TableCell>
-                  {log.ip}
-                </TableCell>
-                <TableCell>
-                  {format(log.createdAt, 'yyyy/MM/dd HH:mm:ss')}
+                  {format(log.createdAt, "yyyy/MM/dd HH:mm:ss")}
                 </TableCell>
               </TableRow>
             ))}

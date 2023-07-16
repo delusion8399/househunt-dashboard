@@ -1,29 +1,20 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Divider,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { getHours } from "date-fns";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
+import { Chart1 } from "src/components/widgets/charts/chart-1";
 import { AuthGuard } from "../../components/authentication/auth-guard";
 import { DashboardLayout } from "../../components/dashboard/dashboard-layout";
-import { ArrowRight as ArrowRightIcon } from "../../icons/arrow-right";
-import { Briefcase as BriefcaseIcon } from "../../icons/briefcase";
-import { Download as DownloadIcon } from "../../icons/download";
-import { ExternalLink as ExternalLinkIcon } from "../../icons/external-link";
-import { InformationCircleOutlined as InformationCircleOutlinedIcon } from "../../icons/information-circle-outlined";
-import { Users as UsersIcon } from "../../icons/users";
 import { gtm } from "../../lib/gtm";
+import { HotPropertiesChart } from "src/components/dashboard/hot-properties-chart";
+import { useEntity } from "src/hooks/use-entity";
+import { useAuth } from "src/hooks/use-auth";
 
 const Overview: NextPage = () => {
+  const { user } = useAuth();
+  const { find, entities } = useEntity("listing/get-hot-properties");
+
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
@@ -41,6 +32,10 @@ const Overview: NextPage = () => {
 
     return "Good morning";
   }
+
+  useEffect(() => {
+    find({ ...(user.type === "user" ? { user: user._id } : {}) }, {});
+  }, []);
 
   return (
     <>
@@ -63,7 +58,10 @@ const Overview: NextPage = () => {
             </Grid>
           </Box>
           <Grid container spacing={4}>
-            <Grid item md={6} xs={12}></Grid>
+            <Grid item md={6} xs={12}>
+              {console.log(entities)}
+              <HotPropertiesChart data={entities.data ?? []} />
+            </Grid>
             <Grid item md={6} xs={12}></Grid>
             <Grid item md={8} xs={12}></Grid>
             <Grid item md={4} xs={12}></Grid>

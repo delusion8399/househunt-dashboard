@@ -56,7 +56,7 @@ const PropertyHeader = ({ listing }) => {
             )}
           </Typography>
           <Typography variant="body2">
-            {listing?.billing?.propertyFor === "rent" ? "Rent" : "Price"}
+            {listing?.billing?.propertyFor === "rent" ? "Rent " : "Price "}
             excludes maintainace, floor rise cost etc.
           </Typography>
         </Stack>

@@ -15,7 +15,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { customerApi } from "../../../__fake-api__/customer-api";
 import { AuthGuard } from "../../../components/authentication/auth-guard";
 import { DashboardLayout } from "../../../components/dashboard/dashboard-layout";
 import { CustomerListTable } from "../../../components/dashboard/customer/customer-list-table";
@@ -26,6 +25,7 @@ import { Search as SearchIcon } from "../../../icons/search";
 import { Upload as UploadIcon } from "../../../icons/upload";
 import { gtm } from "../../../lib/gtm";
 import type { Customer } from "../../../types/customer";
+import { useEntity } from "src/hooks/use-entity";
 
 interface Filters {
   query?: string;
@@ -150,13 +150,15 @@ const CustomerList: NextPage = () => {
     query: "",
   });
 
+  const { find, loading, entities } = useEntity("user");
+
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
 
   const getCustomers = useCallback(async () => {
     try {
-      const data = await customerApi.getCustomers();
+      const data = await find({}, {});
 
       if (isMounted()) {
         setCustomers(data);
@@ -215,15 +217,6 @@ const CustomerList: NextPage = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  // Usually query is done on backend with indexing solutions
-  const filteredCustomers = applyFilters(customers, filters);
-  const sortedCustomers = applySort(filteredCustomers, sort);
-  const paginatedCustomers = applyPagination(
-    sortedCustomers,
-    page,
-    rowsPerPage
-  );
-
   return (
     <>
       <Head>
@@ -240,18 +233,18 @@ const CustomerList: NextPage = () => {
           <Box sx={{ mb: 4 }}>
             <Grid container justifyContent="space-between" spacing={3}>
               <Grid item>
-                <Typography variant="h4">Customers</Typography>
+                <Typography variant="h4">Users</Typography>
               </Grid>
               <Grid item>
-                <Button
+                {/* <Button
                   startIcon={<PlusIcon fontSize="small" />}
                   variant="contained"
                 >
                   Add
-                </Button>
+                </Button> */}
               </Grid>
             </Grid>
-            <Box
+            {/* <Box
               sx={{
                 m: -1,
                 mt: 3,
@@ -266,10 +259,10 @@ const CustomerList: NextPage = () => {
               >
                 Export
               </Button>
-            </Box>
+            </Box> */}
           </Box>
           <Card>
-            <Tabs
+            {/* <Tabs
               indicatorColor="primary"
               onChange={handleTabsChange}
               scrollButtons="auto"
@@ -282,61 +275,17 @@ const CustomerList: NextPage = () => {
                 <Tab key={tab.value} label={tab.label} value={tab.value} />
               ))}
             </Tabs>
-            <Divider />
-            <Box
-              sx={{
-                alignItems: "center",
-                display: "flex",
-                flexWrap: "wrap",
-                m: -1.5,
-                p: 3,
-              }}
-            >
-              <Box
-                component="form"
-                onSubmit={handleQueryChange}
-                sx={{
-                  flexGrow: 1,
-                  m: 1.5,
-                }}
-              >
-                <TextField
-                  defaultValue=""
-                  fullWidth
-                  inputProps={{ ref: queryRef }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  placeholder="Search customers"
-                />
-              </Box>
-              <TextField
-                label="Sort By"
-                name="sort"
-                onChange={handleSortChange}
-                select
-                SelectProps={{ native: true }}
-                sx={{ m: 1.5 }}
-                value={sort}
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Box>
+            <Divider /> */}
+
             <CustomerListTable
-              customers={paginatedCustomers}
-              customersCount={filteredCustomers.length}
+              customers={
+                entities?.data?.users.length > 0 ? entities?.data?.users : []
+              }
+              customersCount={entities?.data?.total}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               rowsPerPage={rowsPerPage}
-              page={page}
+              page={page - 1}
             />
           </Card>
         </Container>

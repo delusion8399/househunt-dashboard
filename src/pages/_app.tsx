@@ -23,7 +23,6 @@ import {
 import { AuthConsumer, AuthProvider } from "../contexts/jwt-context";
 import { gtmConfig } from "../config";
 import { gtm } from "../lib/gtm";
-import { store } from "../store";
 import { createTheme } from "../theme";
 import { createEmotionCache } from "../utils/create-emotion-cache";
 import "../i18n";
@@ -59,40 +58,38 @@ const App: FC<EnhancedAppProps> = (props) => {
           <title>Househunt</title>
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
-        <ReduxProvider store={store}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <AuthProvider>
-              <SettingsProvider>
-                <SettingsConsumer>
-                  {({ settings }) => (
-                    <ThemeProvider
-                      theme={createTheme({
-                        direction: settings.direction,
-                        responsiveFontSizes: settings.responsiveFontSizes,
-                        mode: settings.theme,
-                      })}
-                    >
-                      <RTL direction={settings.direction}>
-                        <CssBaseline />
-                        <Toaster position="top-center" />
-                        <SettingsButton />
-                        <AuthConsumer>
-                          {(auth) =>
-                            !auth.isInitialized ? (
-                              <SplashScreen />
-                            ) : (
-                              getLayout(<Component {...pageProps} />)
-                            )
-                          }
-                        </AuthConsumer>
-                      </RTL>
-                    </ThemeProvider>
-                  )}
-                </SettingsConsumer>
-              </SettingsProvider>
-            </AuthProvider>
-          </LocalizationProvider>
-        </ReduxProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <AuthProvider>
+            <SettingsProvider>
+              <SettingsConsumer>
+                {({ settings }) => (
+                  <ThemeProvider
+                    theme={createTheme({
+                      direction: settings.direction,
+                      responsiveFontSizes: settings.responsiveFontSizes,
+                      mode: settings.theme,
+                    })}
+                  >
+                    <RTL direction={settings.direction}>
+                      <CssBaseline />
+                      <Toaster position="top-center" />
+                      <SettingsButton />
+                      <AuthConsumer>
+                        {(auth) =>
+                          !auth.isInitialized ? (
+                            <SplashScreen />
+                          ) : (
+                            getLayout(<Component {...pageProps} />)
+                          )
+                        }
+                      </AuthConsumer>
+                    </RTL>
+                  </ThemeProvider>
+                )}
+              </SettingsConsumer>
+            </SettingsProvider>
+          </AuthProvider>
+        </LocalizationProvider>
       </QueryClientProvider>
     </CacheProvider>
   );

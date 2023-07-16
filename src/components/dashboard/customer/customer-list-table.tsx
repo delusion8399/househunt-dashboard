@@ -63,7 +63,7 @@ export const CustomerListTable: FC<CustomerListTableProps> = (props) => {
     event: ChangeEvent<HTMLInputElement>
   ): void => {
     setSelectedCustomers(
-      event.target.checked ? customers.map((customer) => customer.id) : []
+      event.target.checked ? customers.map((customer) => customer._id) : []
     );
   };
 
@@ -129,16 +129,20 @@ export const CustomerListTable: FC<CustomerListTableProps> = (props) => {
           <TableBody>
             {customers.map((customer) => {
               const isCustomerSelected = selectedCustomers.includes(
-                customer.id
+                customer._id
               );
 
               return (
-                <TableRow hover key={customer.id} selected={isCustomerSelected}>
+                <TableRow
+                  hover
+                  key={customer._id}
+                  selected={isCustomerSelected}
+                >
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={isCustomerSelected}
                       onChange={(event) =>
-                        handleSelectOneCustomer(event, customer.id)
+                        handleSelectOneCustomer(event, customer._id)
                       }
                       value={isCustomerSelected}
                     />
@@ -160,7 +164,10 @@ export const CustomerListTable: FC<CustomerListTableProps> = (props) => {
                         {getInitials(customer.name)}
                       </Avatar>
                       <Box sx={{ ml: 1 }}>
-                        <NextLink href="/dashboard/customers/1" passHref>
+                        <NextLink
+                          href={`/dashboard/customers/${customer._id}`}
+                          passHref
+                        >
                           <Link color="inherit" variant="subtitle2">
                             {customer.name}
                           </Link>
@@ -173,12 +180,18 @@ export const CustomerListTable: FC<CustomerListTableProps> = (props) => {
                   </TableCell>
                   <TableCell></TableCell>
                   <TableCell align="right">
-                    <NextLink href="/dashboard/customers/1/edit" passHref>
+                    <NextLink
+                      href={`/dashboard/customers/${customer._id}/edit`}
+                      passHref
+                    >
                       <IconButton component="a">
                         <PencilAltIcon fontSize="small" />
                       </IconButton>
                     </NextLink>
-                    <NextLink href="/dashboard/customers/1" passHref>
+                    <NextLink
+                      href={`/dashboard/customers/${customer._id}`}
+                      passHref
+                    >
                       <IconButton component="a">
                         <ArrowRightIcon fontSize="small" />
                       </IconButton>

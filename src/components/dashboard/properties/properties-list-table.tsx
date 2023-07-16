@@ -150,7 +150,6 @@ export const PropertiesListTable: FC<PropertiesListTableProps> = (props) => {
         console.error(err);
         toast.error("Something went wrong!");
         helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
     },

@@ -1,8 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
-import type { ChangeEvent } from "react";
-import type { NextPage } from "next";
-import NextLink from "next/link";
-import Head from "next/head";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Avatar,
   Box,
@@ -16,31 +12,35 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { customerApi } from "../../../../__fake-api__/customer-api";
+import type { NextPage } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
+import { useEntity } from "src/hooks/use-entity";
 import { AuthGuard } from "../../../../components/authentication/auth-guard";
-import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
 import { CustomerBasicDetails } from "../../../../components/dashboard/customer/customer-basic-details";
-import { CustomerDataManagement } from "../../../../components/dashboard/customer/customer-data-management";
-import { CustomerEmailsSummary } from "../../../../components/dashboard/customer/customer-emails-summary";
-import { CustomerInvoices } from "../../../../components/dashboard/customer/customer-invoices";
-import { CustomerPayment } from "../../../../components/dashboard/customer/customer-payment";
+import { CustomerListings } from "../../../../components/dashboard/customer/customer-listings";
 import { CustomerLogs } from "../../../../components/dashboard/customer/customer-logs";
-import { useMounted } from "../../../../hooks/use-mounted";
+import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
 import { ChevronDown as ChevronDownIcon } from "../../../../icons/chevron-down";
 import { PencilAlt as PencilAltIcon } from "../../../../icons/pencil-alt";
 import { gtm } from "../../../../lib/gtm";
 import type { Customer } from "../../../../types/customer";
 import { getInitials } from "../../../../utils/get-initials";
+import { Trash } from "src/icons/trash";
+import toast from "react-hot-toast";
 
 const tabs = [
   { label: "Details", value: "details" },
-  { label: "Invoices", value: "invoices" },
+  { label: "Listings", value: "listings" },
   { label: "Logs", value: "logs" },
 ];
 
 const CustomerDetails: NextPage = () => {
-  const isMounted = useMounted();
+  const { findOne, entity, deleteEntity } = useEntity("user");
+  const router = useRouter();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [currentTab, setCurrentTab] = useState<string>("details");
 
@@ -48,38 +48,35 @@ const CustomerDetails: NextPage = () => {
     gtm.push({ event: "page_view" });
   }, []);
 
-  const getCustomer = useCallback(async () => {
-    try {
-      const data = await customerApi.getCustomer();
-
-      if (isMounted()) {
-        setCustomer(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMounted]);
-
-  useEffect(
-    () => {
-      getCustomer();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleTabsChange = (event: ChangeEvent<{}>, value: string): void => {
     setCurrentTab(value);
   };
+  useEffect(() => {
+    findOne(router.query.customerId);
+  }, []);
+
+  useEffect(() => {
+    if (entity) setCustomer(entity.data);
+  }, [entity]);
 
   if (!customer) {
     return null;
   }
 
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await deleteEntity(userId);
+      toast.success("User deleted");
+      router.push("/dashboard/customers");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       <Head>
-        <title>Dashboard: Customer Details | Househunt</title>
+        <title>Dashboard: User Details | Househunt</title>
       </Head>
       <Box
         component="main"
@@ -133,12 +130,15 @@ const CustomerDetails: NextPage = () => {
                     }}
                   >
                     <Typography variant="subtitle2">user_id:</Typography>
-                    <Chip label={customer.id} size="small" sx={{ ml: 1 }} />
+                    <Chip label={customer._id} size="small" sx={{ ml: 1 }} />
                   </Box>
                 </div>
               </Grid>
               <Grid item sx={{ m: -1 }}>
-                <NextLink href="/dashboard/customers/1/edit" passHref>
+                <NextLink
+                  href={`/dashboard/customers/${customer._id}/edit`}
+                  passHref
+                >
                   <Button
                     component="a"
                     endIcon={<PencilAltIcon fontSize="small" />}
@@ -149,11 +149,12 @@ const CustomerDetails: NextPage = () => {
                   </Button>
                 </NextLink>
                 <Button
-                  endIcon={<ChevronDownIcon fontSize="small" />}
-                  sx={{ m: 1 }}
-                  variant="contained"
+                  endIcon={<Trash fontSize="small" />}
+                  color="error"
+                  variant="outlined"
+                  onClick={() => handleDeleteUser(customer._id)}
                 >
-                  Actions
+                  Delete
                 </Button>
               </Grid>
             </Grid>
@@ -177,27 +178,26 @@ const CustomerDetails: NextPage = () => {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <CustomerBasicDetails
-                    address1={customer.address1}
-                    address2={customer.address2}
+                    address1={
+                      customer.address1 ||
+                      customer?.address?.split(",")[0] ||
+                      ""
+                    }
+                    address2={
+                      customer.address1 ||
+                      customer?.address?.split(",")[2] ||
+                      ""
+                    }
                     country={customer.country}
                     email={customer.email}
                     isVerified={customer.isVerified}
-                    phone={customer.phone}
+                    phone={customer.mobile}
                     state={customer.state}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <CustomerPayment />
-                </Grid>
-                <Grid item xs={12}>
-                  <CustomerEmailsSummary />
-                </Grid>
-                <Grid item xs={12}>
-                  <CustomerDataManagement />
-                </Grid>
               </Grid>
             )}
-            {currentTab === "invoices" && <CustomerInvoices />}
+            {currentTab === "listings" && <CustomerListings />}
             {currentTab === "logs" && <CustomerLogs />}
           </Box>
         </Container>

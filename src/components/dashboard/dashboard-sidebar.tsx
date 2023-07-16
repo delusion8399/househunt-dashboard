@@ -60,7 +60,7 @@ const getSections = (t: TFunction, user: User): Section[] => [
       ...(user.type === "admin"
         ? [
             {
-              title: t("Customers"),
+              title: t("Users"),
               path: "/dashboard/customers",
               icon: <UsersIcon fontSize="small" />,
             },

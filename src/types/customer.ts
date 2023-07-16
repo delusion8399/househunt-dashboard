@@ -1,7 +1,8 @@
 export interface Customer {
-  id: string;
+  _id: string;
   address1?: string;
   address2?: string;
+  address?: string;
   avatar?: string;
   balance?: number;
   city?: string;
@@ -14,7 +15,7 @@ export interface Customer {
   isReturning?: boolean;
   isVerified?: boolean;
   name: string;
-  phone?: string;
+  mobile?: string;
   state?: string;
   totalAmountSpent?: number;
   totalOrders?: number;

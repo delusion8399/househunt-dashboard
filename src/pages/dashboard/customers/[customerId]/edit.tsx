@@ -1,45 +1,36 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { NextPage } from 'next';
-import NextLink from 'next/link';
-import Head from 'next/head';
-import { Avatar, Box, Chip, Container, Link, Typography } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { customerApi } from '../../../../__fake-api__/customer-api';
-import { AuthGuard } from '../../../../components/authentication/auth-guard';
-import { DashboardLayout } from '../../../../components/dashboard/dashboard-layout';
-import { CustomerEditForm } from '../../../../components/dashboard/customer/customer-edit-form';
-import { useMounted } from '../../../../hooks/use-mounted';
-import { gtm } from '../../../../lib/gtm';
-import type { Customer } from '../../../../types/customer';
-import { getInitials } from '../../../../utils/get-initials';
+import { useState, useCallback, useEffect } from "react";
+import type { NextPage } from "next";
+import NextLink from "next/link";
+import Head from "next/head";
+import { Avatar, Box, Chip, Container, Link, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { AuthGuard } from "../../../../components/authentication/auth-guard";
+import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
+import { CustomerEditForm } from "../../../../components/dashboard/customer/customer-edit-form";
+import { gtm } from "../../../../lib/gtm";
+import type { Customer } from "../../../../types/customer";
+import { getInitials } from "../../../../utils/get-initials";
+import { useRouter } from "next/router";
+import { useEntity } from "src/hooks/use-entity";
 
 const CustomerEdit: NextPage = () => {
-  const isMounted = useMounted();
+  const { findOne, entity } = useEntity("user");
+
+  const router = useRouter();
+
   const [customer, setCustomer] = useState<Customer | null>(null);
 
   useEffect(() => {
-    gtm.push({ event: 'page_view' });
+    gtm.push({ event: "page_view" });
   }, []);
 
-  const getCustomer = useCallback(async () => {
-    try {
-      const data = await customerApi.getCustomer();
+  useEffect(() => {
+    findOne(router.query.customerId);
+  }, []);
 
-      if (isMounted()) {
-        setCustomer(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMounted]);
-
-  useEffect(
-    () => {
-      getCustomer();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  useEffect(() => {
+    if (entity) setCustomer(entity.data);
+  }, [entity]);
 
   if (!customer) {
     return null;
@@ -48,47 +39,37 @@ const CustomerEdit: NextPage = () => {
   return (
     <>
       <Head>
-        <title>
-          Dashboard: Customer Edit | Material Kit Pro
-        </title>
+        <title>Dashboard: User Edit</title>
       </Head>
       <Box
         component="main"
         sx={{
-          backgroundColor: 'background.default',
+          backgroundColor: "background.default",
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
         <Container maxWidth="md">
           <Box sx={{ mb: 4 }}>
-            <NextLink
-              href="/dashboard/customers"
-              passHref
-            >
+            <NextLink href="/dashboard/customers" passHref>
               <Link
                 color="textPrimary"
                 component="a"
                 sx={{
-                  alignItems: 'center',
-                  display: 'flex'
+                  alignItems: "center",
+                  display: "flex",
                 }}
               >
-                <ArrowBackIcon
-                  fontSize="small"
-                  sx={{ mr: 1 }}
-                />
-                <Typography variant="subtitle2">
-                  Customers
-                </Typography>
+                <ArrowBackIcon fontSize="small" sx={{ mr: 1 }} />
+                <Typography variant="subtitle2">Customers</Typography>
               </Link>
             </NextLink>
           </Box>
           <Box
             sx={{
-              alignItems: 'center',
-              display: 'flex',
-              overflow: 'hidden'
+              alignItems: "center",
+              display: "flex",
+              overflow: "hidden",
             }}
           >
             <Avatar
@@ -96,35 +77,26 @@ const CustomerEdit: NextPage = () => {
               sx={{
                 height: 64,
                 mr: 2,
-                width: 64
+                width: 64,
               }}
             >
               {getInitials(customer.name)}
             </Avatar>
             <div>
-              <Typography
-                noWrap
-                variant="h4"
-              >
+              <Typography noWrap variant="h4">
                 {customer.email}
               </Typography>
               <Box
                 sx={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
+                  alignItems: "center",
+                  display: "flex",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
-                <Typography variant="subtitle2">
-                  user_id:
-                </Typography>
-                <Chip
-                  label={customer.id}
-                  size="small"
-                  sx={{ ml: 1 }}
-                />
+                <Typography variant="subtitle2">user_id:</Typography>
+                <Chip label={customer._id} size="small" sx={{ ml: 1 }} />
               </Box>
             </div>
           </Box>
@@ -139,9 +111,7 @@ const CustomerEdit: NextPage = () => {
 
 CustomerEdit.getLayout = (page) => (
   <AuthGuard>
-    <DashboardLayout>
-      {page}
-    </DashboardLayout>
+    <DashboardLayout>{page}</DashboardLayout>
   </AuthGuard>
 );
 
